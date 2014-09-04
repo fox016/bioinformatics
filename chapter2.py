@@ -1,12 +1,6 @@
-from chapter1 import get_complement
+import sys
 
-"""
--------------------- Global Variables
-"""
-
-"""
--------------------- Primary Functions
-"""
+nucleotide_pair_map = {"A":"T", "T":"A", "C":"G", "G":"C"}
 
 def build_peptide(rna):
 	codons = []
@@ -16,129 +10,121 @@ def build_peptide(rna):
 	return ''.join(peptide)
 
 def find_peptide_encoding(genome, peptide):
-	rna1 = build_rna(genome)
-	rna2 = build_rna(get_complement(genome))
-	translated_peptides = []
-	translated_peptides.append(build_peptide(rna1))
-	translated_peptides.append(build_peptide(rna1[1:] + rna1[0:1]))
-	translated_peptides.append(build_peptide(rna1[2:] + rna1[0:2]))
-	translated_peptides.append(build_peptide(rna2))
-	translated_peptides.append(build_peptide(rna2[1:] + rna2[0:1]))
-	translated_peptides.append(build_peptide(rna2[2:] + rna2[0:2]))
-	return translated_peptides
-	# TODO
-
-"""
--------------------- Helper Functions
-"""
+	window_size = len(peptide)*3
+	windows = []
+	for index in xrange(len(genome) - window_size + 1):
+		window = genome[index:index+window_size]
+		if build_peptide(build_rna(window)) == peptide or build_peptide(build_rna(get_complement(window))) == peptide:
+			windows.append(window)
+	return windows
 
 def build_rna(dna):
 	return dna.replace("T","U")
 
 def translate_codon(codon):
+	codon = codon.lower()
 	c1 = codon[0]
 	c2 = codon[1]
 	c3 = codon[2]
 	if c1 == "a":
 		if c2 == "a":
 			if c3 == "a":
-				return "Lys"
+				return "K"
 			elif c3 == "c":
-				return "Asn"
+				return "N"
 			elif c3 == "g":
-				return "Lys"
+				return "K"
 			else:
-				return "Asn"
+				return "N"
 		elif c2 == "c":
-			return "Thr"
+			return "T"
 		elif c2 == "g":
 			if c3 == "a":
-				return "Arg"
+				return "R"
 			elif c3 == "c":
-				return "Ser"
+				return "S"
 			elif c3 == "g":
-				return "Arg"
+				return "R"
 			else:
-				return "Ser"
+				return "S"
 		else:
 			if c3 == "a":
-				return "Ile"
+				return "I"
 			elif c3 == "c":
-				return "Ile"
+				return "I"
 			elif c3 == "g":
-				return "Met"
+				return "M"
 			else:
-				return "Ile"
+				return "I"
 	elif c1 == "c":
 		if c2 == "a":
 			if c3 == "a":
-				return "Gln"
+				return "Q"
 			elif c3 == "c":
-				return "His"
+				return "H"
 			elif c3 == "g":
-				return "Gln"
+				return "Q"
 			else:
-				return "His"
+				return "H"
 		elif c2 == "c":
-			return "Pro"
+			return "P"
 		elif c2 == "g":
-			return "Arg"
+			return "R"
 		else:
-			return "Leu"
+			return "L"
 	elif c1 == "g":
 		if c2 == "a":
 			if c3 == "a":
-				return "Glu"
+				return "E"
 			elif c3 == "c":
-				return "Asp"
+				return "D"
 			elif c3 == "g":
-				return "Glu"
+				return "E"
 			else:
-				return "Asp"
+				return "D"
 		elif c2 == "c":
-			return "Ala"
+			return "A"
 		elif c2 == "g":
-			return "Gly"
+			return "G"
 		else:
-			return "Val"
+			return "V"
 	else:
 		if c2 == "a":
 			if c3 == "a":
-				return "XXX"
+				return "*"
 			elif c3 == "c":
-				return "Tyr"
+				return "Y"
 			elif c3 == "g":
-				return "XXX"
+				return "*"
 			else:
-				return "Tyr"
+				return "Y"
 		elif c2 == "c":
-			return "Ser"
+			return "S"
 		elif c2 == "g":
 			if c3 == "a":
-				return "XXX"
+				return "*"
 			elif c3 == "c":
-				return "Cys"
+				return "C"
 			elif c3 == "g":
-				return "Trp"
+				return "W"
 			else:
-				return "Cys"
+				return "C"
 		else:
 			if c3 == "a":
-				return "Leu"
+				return "L"
 			elif c3 == "c":
-				return "Phe"
+				return "F"
 			elif c3 == "g":
-				return "Leu"
+				return "L"
 			else:
-				return "Phe"
+				return "F"
 	return "ERR"
 
-"""
--------------------- Script
-"""
+def get_complement(sequence):
+	return ''.join(map(lambda x: nucleotide_pair_map[x], sequence)[::-1])
 
-cholera = "atcaatgatcaacgtaagcttctaagcatgatcaaggtgctcacacagtttatccacaacctgagtggatgacatcaagataggtcgttgtatctccttcctctcgtactctcatgaccacggaaagatgatcaagagaggatgatttcttggccatatcgcaatgaatacttgtgacttgtgcttccaattgacatcttcagcgccatattgcgctggccaaggtgacggagcgggattacgaaagcatgatcatggctgttgttctgtttatcttgttttgactgagacttgttaggatagacggtttttcatcactgactagccaaagccttactctgcctgacatgcaccgtaaattgataatgaatttacatgcttccgcgacgatttacctcttgatcatcgatccgattgaagatcttcaattgttaattctcttgcctcgactcatagccatgatgagctcttgatcatgtttccttaaccctctattttttacggaagaatgatcaagctgctgctcttgatcatcgtttc"
-
-print build_peptide(build_rna(cholera))
-
-print find_peptide_encoding(cholera, "IleAsnAspGlnArgLysLeuLeuSer")
+filename = sys.argv[1]
+input = [line.split() for line in open(filename, "r")]
+genome = input[0][0]
+peptide = input[1][0]
+print ' '.join(find_peptide_encoding(genome, peptide))
