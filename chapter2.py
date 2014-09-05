@@ -125,6 +125,5 @@ def get_complement(sequence):
 
 filename = sys.argv[1]
 input = [line.split() for line in open(filename, "r")]
-genome = input[0][0]
-peptide = input[1][0]
-print ' '.join(find_peptide_encoding(genome, peptide))
+rna = input[0][0]
+print build_peptide(rna)

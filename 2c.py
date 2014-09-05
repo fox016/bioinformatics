@@ -24,22 +24,18 @@ mass_table = {
 }
 
 def get_spectrum(peptide):
-	return map(get_mass, get_subpeptides(peptide))
+	return sorted(map(get_mass, get_subpeptides(peptide)))
 
 def get_subpeptides(peptide):
 	subs = [""]
-	for length in xrange(1, len(peptide)+1):
+	for length in xrange(1, len(peptide)):
 		for i in xrange(len(peptide)):
 			if i+length <= len(peptide):
-				print i, i+length
 				subs.append(peptide[i:i+length])
 			else:
-				have = len(peptide) - i
-				rem = length - have
-				print i, 0, rem-1
-				subs.append(peptide[i:] + peptide[0:rem-1])
+				rem = length - (len(peptide) - i)
+				subs.append(peptide[i:] + peptide[0:rem])
 	subs.append(peptide)
-	print subs
 	return subs
 
 def get_mass(subpeptide):
@@ -48,4 +44,4 @@ def get_mass(subpeptide):
 filename = sys.argv[1]
 input = [line.split() for line in open(filename, "r")]
 peptide = input[0][0]
-print ' '.join(map(str, sorted(get_spectrum(peptide))))
+print ' '.join(map(str, get_spectrum(peptide)))
