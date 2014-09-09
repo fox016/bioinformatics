@@ -5,7 +5,7 @@ values = [57, 71, 87, 97, 99, 101, 103, 113, 114, 115, 128, 129, 131, 137, 147, 
 def count_peptides(mass):
 
 	"""
-	Runtime O(mass^2)
+	Runtime ?
 	@param mass - target peptide mass
 	@return count of all linear peptides of mass "mass"
 	"""
@@ -18,7 +18,7 @@ def count_peptides(mass):
 			if table[i-value]['count'] != 0:
 				table[i]['count'] += table[i-value]['count']
 				for combo in table[i-value]['combos']:
-					table[i]['combos'].append(list(combo) + [value])
+					table[i]['combos'].append(list(combo) + [value]) # This is the problem! Copying lists is expensive
 	return reduce(lambda x,y: x+y, map(count_all_unique_orderings, table[mass]['combos']), 0)
 
 def count_all_unique_orderings(nums):
