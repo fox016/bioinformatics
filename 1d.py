@@ -42,9 +42,17 @@ def get_combinations(alphabet, length):
 		result = [x+y for x in result for y in pool]
 	return result
 
+"""
 filename = sys.argv[1]
 input = [line.split() for line in open(filename, "r")]
 genome = input[0][0]
 k, l, t = map(int, input[1])
-
 print ' '.join(map(str, find_clumps_4k(genome, k, l, t)))
+"""
+
+ecoli = ''.join([line for line in open("e_coli.txt", "r")]).replace("\n", "")
+ecoli = ecoli[3800000:4100000]
+k = 9
+l = 1000
+t = 5
+print ' '.join(map(str, find_clumps_4k(ecoli, k, l, t)))

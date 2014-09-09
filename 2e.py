@@ -28,21 +28,21 @@ def expand(queue):
 
 def is_consistent(peptide, spectrum):
 	spec_copy = list(spectrum)
-	pep_spectrum = get_spectrum(peptide) # Error is here, things are doubled and stuff
+	print peptide[1:]
+	pep_spectrum = get_spectrum(peptide[1:])
 	for mass in pep_spectrum:
-		print spec_copy, pep_spectrum, mass
+		print mass, pep_spectrum, spec_copy
 		try:
 			spec_copy.remove(mass)
 		except ValueError:
 			return False
-	print peptide
 	return True
 
 def get_spectrum(peptide):
 	return sorted(map(sum, get_subpeptides(peptide)))
 
 def get_subpeptides(peptide):
-	subs = [""]
+	subs = [(0,)]
 	for length in xrange(1, len(peptide)):
 		for i in xrange(len(peptide)):
 			if i+length <= len(peptide):
@@ -54,5 +54,4 @@ def get_subpeptides(peptide):
 	return subs
 
 spectrum = map(int, "0 113 128 186 241 299 314 427".split())
-#print list(sequence_cyclopeptide(spectrum))
-print is_consistent((0, 113, 128), (0, 113, 128, 128))
+print list(sequence_cyclopeptide(spectrum))
