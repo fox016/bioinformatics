@@ -13,7 +13,7 @@ def leaderboard_sequence_cyclopeptide(spectrum, n):
 			if sum(peptide) == spectrum_mass:
 				if score(peptide, spectrum) > score(leaderPeptide, spectrum):
 					leaderPeptide = peptide
-			elif not sum(peptide) > spectrum_mass:
+			elif sum(peptide) > spectrum_mass:
 				prune.add(peptide)
 		leaderboard -= prune
 		leaderboard = cut(leaderboard, spectrum, n)
@@ -23,23 +23,35 @@ def expand(queue):
 	return set([peptide + tuple([value]) for peptide in queue for value in values])
 
 def score(peptide, spectrum):
-	spec_copy = list(spectrum)
-	pep_spectrum = get_spectrum(peptide)
+	experimental = list(spectrum)
+	theoretical = get_spectrum(peptide, True)
 	misses = 0
-	for mass in pep_spectrum:
+	for mass in theoretical:
 		try:
-			spec_copy.remove(mass)
+			experimental.remove(mass)
 		except ValueError:
 			misses+=1
-	return len(pep_spectrum) - misses
+	return len(theoretical) - misses
 
 def cut(leaderboard, spectrum, n):
-	pass # TODO
+	score_peptide_map = {}
+	for peptide in leaderboard:
+		current_score = score(peptide, spectrum)
+		if current_score not in score_peptide_map:
+			score_peptide_map[current_score] = [peptide]
+		else:
+			score_peptide_map[current_score].append(peptide)
+	cutboard = set()
+	for key in reversed(sorted(score_peptide_map.keys())):
+		if len(cutboard) >= n:
+			return cutboard
+		cutboard.update(score_peptide_map[key])
+	return cutboard
 
-def get_spectrum(peptide):
-	return sorted(map(sum, get_subpeptides(peptide)))
+def get_spectrum(peptide, isCircular):
+	return sorted(map(sum, get_subpeptides(peptide, isCircular)))
 
-def get_subpeptides(peptide):
+def get_subpeptides(peptide, isCircular):
 	if peptide[0] == 0:
 		peptide = peptide[1:]
 	subs = [(0,)]
@@ -47,15 +59,13 @@ def get_subpeptides(peptide):
 		for i in xrange(len(peptide)):
 			if i+length <= len(peptide):
 				subs.append(peptide[i:i+length])
-			"""
-			else: # TODO I took this branch out and that seemed to make the example on page 60 run better
+			elif isCircular:
 				rem = length - (len(peptide) - i)
 				subs.append(peptide[i:] + peptide[0:rem])
-			"""
 	subs.append(peptide)
 	return subs
 
 input = [map(int, line.split()) for line in open("input.txt", "r")]
 n = input[0][0]
 spectrum = input[1]
-print leaderboard_sequence_cyclopeptide(spectrum, n)
+print '-'.join(map(str, leaderboard_sequence_cyclopeptide(spectrum, n)[1:]))
