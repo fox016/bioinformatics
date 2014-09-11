@@ -21,6 +21,9 @@ def find_peptide_encoding(genome, peptide):
 def build_rna(dna):
 	return dna.replace("T","U")
 
+def get_complement(sequence):
+	return ''.join(map(lambda x: nucleotide_pair_map[x], sequence)[::-1])
+
 def translate_codon(codon):
 	codon = codon.lower()
 	c1 = codon[0]
@@ -120,10 +123,8 @@ def translate_codon(codon):
 				return "F"
 	return "ERR"
 
-def get_complement(sequence):
-	return ''.join(map(lambda x: nucleotide_pair_map[x], sequence)[::-1])
-
 filename = sys.argv[1]
 input = [line.split() for line in open(filename, "r")]
-rna = input[0][0]
-print build_peptide(rna)
+genome = input[0][0]
+peptide = input[1][0]
+print find_peptide_encoding(genome, peptide)
