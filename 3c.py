@@ -13,10 +13,8 @@ def profile_most_probable_kmer(text, k, profile):
 def get_probability(kmer, profile):
 	return reduce(lambda x, y: x * y, map(lambda index: profile[val_index_map[kmer[index]]][index], xrange(len(kmer))), 1)
 
-text = "ACGGGGATTACCTCGGGGATTTCC"
-k = 12
-profile = [[0.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.9, 0.1, 0.1, 0.1, 0.3, 0.0],
-		[0.1, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.1, 0.2, 0.4, 0.6],
-		[0.0, 0.0, 1.0, 1.0, 0.9, 0.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
-		[0.7, 0.2, 0.0, 0.0, 0.1, 0.1, 0.0, 0.5, 0.8, 0.7, 0.3, 0.4]]
+read = [line[0:-1] for line in open("input.txt", "r")]
+text = read[0]
+k = int(read[1])
+profile = map(lambda x: map(float, x.split()), read[2:])
 print profile_most_probable_kmer(text, k, profile)

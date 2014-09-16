@@ -1,5 +1,5 @@
+#!/usr/bin/python
 import sys
-import random
 
 def median_string(dna_list, k):
 	best = {"pattern": "", "distance": float("inf")}
@@ -40,18 +40,7 @@ def get_combinations(length):
 		result = [x+y for x in result for y in pool]
 	return result
 
-"""
-def generate_genome(length):
-	genome = ""
-	for i in xrange(length):
-		genome += random.choice("ACTG")
-	return genome
-
-dna_list = []
-for i in xrange(10):
-	dna_list.append(generate_genome(100))
-k = 5
-print '\n'.join(dna_list)
-print k
+read = [line for line in open("input.txt", "r")]
+k = int(read[0])
+dna_list = read[1:]
 print median_string(dna_list, k)
-"""
