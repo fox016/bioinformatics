@@ -76,7 +76,7 @@ def get_probability(kmer, profile):
 	return reduce(lambda x, y: x * y, map(lambda index: profile[val_index_map[kmer[index]]][index], xrange(len(kmer))), 1)
 
 def get_motif(profile, dna, k):
-	return profile_most_probable_kmer(dna, k, profile) # TODO this is not hos it is supposed to be done (see pages 113-114)
+	return profile_most_probable_kmer(dna, k, profile) # TODO this is not how it is supposed to be done (see pages 113-114)
 
 read = [line for line in open("input.txt", "r")]
 k, t, n = map(int, read[0].split())
