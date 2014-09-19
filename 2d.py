@@ -13,11 +13,12 @@ def count_peptides_new(mass):
 				table[i]['count'] += table[i-value]['count']
 				table[i]['pairs'].append((i-value,value))
 	combos = build_combos(table, mass)
+	print combos
 	return sum(map(count_all_unique_orderings, combos))
 
-combo_map = {0: [[]]}
+combo_map = {0: set()}
 for value in values:
-	combo_map[value] = [[value]]
+	combo_map[value] = set([tuple([value])])
 
 def build_combos(table, index):
 
@@ -25,16 +26,18 @@ def build_combos(table, index):
 		return combo_map[index]
 
 	pairs = table[index]['pairs']
-	combos = []
+	combos = set()
 	for i in xrange(len(pairs)):
-		left = build_combos(table, pairs[i][0])
-		right = build_combos(table, pairs[i][1])
-		for left_list in left:
-			for right_list in right:
-				combos.append(left_list + right_list)
-	
+		left_set = build_combos(table, pairs[i][0])
+		right_set = build_combos(table, pairs[i][1])
+		for left_tuple in left_set:
+			for right_tuple in right_set:
+				combos.add(sorted_join(left_tuple, right_tuple))
 	combo_map[index] = combos
 	return combos
+
+def sorted_join(left_tuple, right_tuple):
+	return tuple(sorted(left_tuple) + sorted(right_tuple))
 """
 
 def count_peptides(mass):
@@ -47,6 +50,7 @@ def count_peptides(mass):
 				table[i]['count'] += table[i-value]['count']
 				for combo in table[i-value]['combos']:
 					table[i]['combos'].append(combo + [value]) # This is the problem! Copying lists is expensive
+	#print table[mass]['combos']
 	return sum(map(count_all_unique_orderings, table[mass]['combos']))
 
 def count_all_unique_orderings(nums):
@@ -81,5 +85,5 @@ def count_n_choose_k(N, k):
 		val = (val*(N-j))//(j+1)
 	return val
 
-mass = 1359
+mass = 300
 print count_peptides(mass)
