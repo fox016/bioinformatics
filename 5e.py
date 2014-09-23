@@ -6,7 +6,7 @@ MATCH = 2
 
 INDEL_COST = -5
 
-PROTEINS = "ACDEFGHIKLMNPQRSTVWY"
+PROTEIN_INDEX_MAP = {'A': 0, 'C': 1, 'E': 3, 'D': 2, 'G': 5, 'F': 4, 'I': 7, 'H': 6, 'K': 8, 'M': 10, 'L': 9, 'N': 11, 'Q': 13, 'P': 12, 'S': 15, 'R': 14, 'T': 16, 'W': 18, 'V': 17, 'Y': 19}
 
 def max_alignment(v, w, matrix):
 	table = []
@@ -25,32 +25,41 @@ def max_alignment(v, w, matrix):
 			table[i][j], ops[i][j] = max_index([table[i-1][j] + INDEL_COST, \
 					table[i][j-1] + INDEL_COST, \
 					table[i-1][j-1] + match_cost(v[i-1], w[j-1], matrix)])
-	return table[len(v)][len(w)], w, unwind_ops(ops, v, len(v), len(w))
+	print table[len(v)][len(w)]
+	unwind_ops(ops, v, w, len(v), len(w))
 
-def unwind_ops(ops, v, i, j):
-	chars = []
+def unwind_ops(ops, v, w, i, j):
+	new_v = []
+	new_w = []
 	while i != 0 or j != 0:
+		print ops[i][j]
 		if ops[i][j] == DELETE:
 			i-=1
+			new_w.append("-")
+			new_v.append("-")
 		elif ops[i][j] == INSERT:
 			j-=1
-			chars.append("-")
+			new_w.append("-")
+			new_v.append("-")
 		else:
-			chars.append(v[i-1])
+			new_v.append(v[i-1])
+			new_w.append(w[j-1])
 			i-=1
 			j-=1
-	return ''.join(chars[::-1])
+		print new_v, new_w
+	print ''.join(new_v[::-1])
+	print ''.join(new_w[::-1])
 
 def match_cost(p1, p2, matrix):
-	return matrix[PROTEINS.index(p1)][PROTEINS.index(p2)]
+	return matrix[PROTEIN_INDEX_MAP[p1]][PROTEIN_INDEX_MAP[p2]]
 
 def max_index(nums):
-	best = (float("-inf"), float("-inf"))
-	for index in xrange(len(nums)):
+	best = (nums[0], 0)
+	for index in xrange(1, len(nums)):
 		if nums[index] > best[0]:
 			best = (nums[index], index)
 	return best
 
 matrix = [map(int, line.split()) for line in open("blosum62.txt", "r")]
-w, v = [line[:-1] for line in open("input.txt", "r")]
-print '\n'.join(map(str, max_alignment(v, w, matrix)))
+v, w = [line[:-1] for line in open("input.txt", "r")]
+max_alignment(v, w, matrix)
