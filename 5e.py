@@ -32,21 +32,19 @@ def unwind_ops(ops, v, w, i, j):
 	new_v = []
 	new_w = []
 	while i != 0 or j != 0:
-		print ops[i][j]
 		if ops[i][j] == DELETE:
+			new_v.append(v[i-1])
 			i-=1
 			new_w.append("-")
-			new_v.append("-")
 		elif ops[i][j] == INSERT:
+			new_w.append(w[j-1])
 			j-=1
-			new_w.append("-")
 			new_v.append("-")
 		else:
 			new_v.append(v[i-1])
 			new_w.append(w[j-1])
 			i-=1
 			j-=1
-		print new_v, new_w
 	print ''.join(new_v[::-1])
 	print ''.join(new_w[::-1])
 
