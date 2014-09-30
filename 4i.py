@@ -73,30 +73,19 @@ class Graph:
 					self.cycle = list(current_cycle)
 				return
 
+def prefix(read):
+	return "|".join(map(lambda x: x[:-1], read.split("|")))
+
+def suffix(read):
+	return "|".join(map(lambda x: x[1:], read.split("|")))
+
+def reconstruct(d, reads):
+	graph = Graph()
+	for read in reads:
+		graph.add_edge(prefix(read), suffix(read))
+	path = graph.eulerian_path()
+	return path
+
 read = [line[:-1] for line in open("input.txt", "r")]
 d = int(read[0])
-graph = Graph()
-for e in read[1:]:
-	graph.add_edge(e[0:-1], e[1:])
-path = graph.eulerian_path()
-print '->'.join(path)
-"""
-print path[0] + ''.join(map(lambda x: x[-1], path[1:]))
-"""
-
-"""
-def reconstruct(d, reads):
-	pass
-
-def paired_composition(k, d, text):
-	composition = []
-	for index in xrange(len(text) - (2 * k + d) + 1):
-		composition.append(text[index:index+k] + "|" + text[index+k+d:index+k+k+d])
-	return composition
-
-k = 3
-d = 1
-text = "TAATGCCATGGGATGTT"
-reads = paired_composition(k, d, text)
-print sorted(reads)
-"""
+print reconstruct(d, read[1:])
