@@ -6,6 +6,17 @@ MATCH = 2
 
 EDIT_COST = -1
 
+def fitting_alignment(v, w):
+	best = (float("-inf"), float("-inf"))
+	for index in xrange(len(v)-len(w)+1):
+		for length in xrange(len(w), len(v)-index+1):
+			v_prime = v[index:index+length]
+			result = max_alignment(v_prime, w)
+			if result[0] > best[0]:
+				best = result
+				print best[0], "Index:", index, "Length:", length
+				print '\n'.join(unwind_ops(best[1], best[2], best[3], best[4], best[5]))
+
 def max_alignment(v, w):
 	table = []
 	ops = []
@@ -23,8 +34,7 @@ def max_alignment(v, w):
 			table[i][j], ops[i][j] = max_index([table[i-1][j] + EDIT_COST, \
 					table[i][j-1] + EDIT_COST, \
 					table[i-1][j-1] + match_cost(v[i-1], w[j-1])])
-	print table[len(v)][len(w)]
-	unwind_ops(ops, v, w, len(v), len(w))
+	return table[len(v)][len(w)], ops, v, w, len(v), len(w)
 
 def unwind_ops(ops, v, w, i, j):
 	new_v = []
@@ -43,8 +53,7 @@ def unwind_ops(ops, v, w, i, j):
 			new_w.append(w[j-1])
 			i-=1
 			j-=1
-	print ''.join(new_v[::-1])
-	print ''.join(new_w[::-1])
+	return ''.join(new_v[::-1]), ''.join(new_w[::-1])
 
 def match_cost(p1, p2):
 	return 1 if p1 == p2 else EDIT_COST
@@ -57,4 +66,4 @@ def max_index(nums):
 	return best
 
 v, w = [line[:-1] for line in open("input.txt", "r")]
-max_alignment(v, w)
+fitting_alignment(v, w)
