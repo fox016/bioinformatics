@@ -19,7 +19,7 @@ def max_alignment(v, w):
 		table[i][0] = INDEL_COST * i
 		ops[i][0] = DELETE
 	for j in xrange(len(w)+1):
-		table[0][j] = INDEL_COST * j
+		#table[0][j] = INDEL_COST * j
 		ops[0][j] = INSERT
 	for i in xrange(1, len(v)+1):
 		for j in xrange(1, len(w)+1):
@@ -48,8 +48,8 @@ def unwind_ops(ops, v, w, i, j):
 			i-=1
 			j-=1
 		else:
-			i=0
-			#j=0
+			i = 0
+			#j = 0
 	print ''.join(new_v[::-1])
 	print ''.join(new_w[::-1])
 
