@@ -16,9 +16,9 @@ def max_alignment(v, w, matrix):
 		table.append([0] * (len(w)+1))
 		ops.append([0] * (len(w)+1))
 	for i in xrange(len(v)+1):
-		ops[i][0] = DELETE
+		ops[i][0] = FREE
 	for j in xrange(len(w)+1):
-		ops[0][j] = INSERT
+		ops[0][j] = FREE
 	for i in xrange(1, len(v)+1):
 		for j in xrange(1, len(w)+1):
 			table[i][j], ops[i][j] = max_index([table[i-1][j] + INDEL_COST, \
