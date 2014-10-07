@@ -14,6 +14,22 @@ class Tree:
 			edge = self._add_edge(node, string[0])
 		self.add_string(string[1:], edge[1])
 	
+	def trie_matching(self, text):
+		return filter(lambda index: self._prefix_matching(text[index:]), xrange(len(text)))
+
+	def _prefix_matching(self, text):
+		symbol_index = 0
+		node = 1
+		while True:
+			edge = None if symbol_index >= len(text) else self._get_edge(node, text[symbol_index])
+			if edge:
+				symbol_index+=1
+				node = edge[1]
+			elif len(self.node_edge_map[node]) == 0:
+				return True
+			else:
+				return False
+	
 	def _get_edge(self, start_node, value):
 		for edge in self.node_edge_map[start_node]:
 			if edge[2] == value:
@@ -35,6 +51,6 @@ class Tree:
 		return '\n'.join(rows)
 
 tree = Tree()
-for pattern in [line[:-1] for line in open("input.txt", "r")]:
-	tree.add_string(pattern)
-print tree
+read = [line[:-1] for line in open("input.txt", "r")]
+map(lambda pattern: tree.add_string(pattern), read[1:])
+print ' '.join(map(str, tree.trie_matching(read[0])))
