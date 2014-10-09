@@ -44,8 +44,10 @@ class Graph:
 			return True
 		return False
 
-edge_input = [line[:-1] for line in open("input.txt", "r")]
+edge_input = [line[:-1] for line in open("example.data.fasta", "r")]
 graph = Graph()
 for e in edge_input:
+	if e[0] == ">":
+		continue
 	graph.add_edge(e[0:-1], e[1:])
 print ' '.join(graph.get_contigs())
