@@ -44,10 +44,17 @@ class Graph:
 			return True
 		return False
 
-edge_input = [line[:-1] for line in open("example.data.fasta", "r")]
+def kmer_composition(text, k):
+	return [text[i:i+k] for i in xrange(len(text)-k+1)]
+
+reads = [line[:-1] for line in open("example.data.fasta", "r")]
+k = 99
 graph = Graph()
-for e in edge_input:
-	if e[0] == ">":
+for read in reads:
+	if read[0] == ">":
 		continue
-	graph.add_edge(e[0:-1], e[1:])
-print ' '.join(graph.get_contigs())
+	kmers = kmer_composition(read, k)
+	for index in xrange(1, len(kmers)):
+		graph.add_edge(kmers[index-1], kmers[index])
+		#graph.add_edge(e[0:-1], e[1:])
+print '\n'.join(graph.get_contigs())
