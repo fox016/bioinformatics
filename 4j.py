@@ -1,13 +1,22 @@
 #!/usr/bin/python
 
+import sys
+
 class Graph:
 
 	def __init__(self):
 		self.node_edge_head_map = {}
 		self.node_edge_tail_map = {}
+		self.edges = set()
+		self.edge_count_map = {}
 	
 	def add_edge(self, n1, n2):
 		edge = (n1, n2)
+		if edge in self.edges:
+			self.edge_count_map[edge] += 1
+			return
+		self.edges.add(edge)
+		self.edge_count_map[edge] = 1
 		if n1 in self.node_edge_head_map:
 			self.node_edge_head_map[n1].append(edge)
 		else:
@@ -44,11 +53,19 @@ class Graph:
 			return True
 		return False
 
+	def __str__(self):
+		heads = []
+		for head in self.node_edge_head_map.keys():
+			edges = map(lambda x:x[1], self.node_edge_head_map[head])
+			heads.append(head + "->" + ','.join(edges))
+		return '\n'.join(heads)
+
 def kmer_composition(text, k):
 	return [text[i:i+k] for i in xrange(len(text)-k+1)]
 
-reads = [line[:-1] for line in open("example.data.fasta", "r")]
-k = 99
+filename = sys.argv[1]
+k = int(sys.argv[2])
+reads = [line[:-1] for line in open(filename, "r")]
 graph = Graph()
 for read in reads:
 	if read[0] == ">":
@@ -56,5 +73,9 @@ for read in reads:
 	kmers = kmer_composition(read, k)
 	for index in xrange(1, len(kmers)):
 		graph.add_edge(kmers[index-1], kmers[index])
-		#graph.add_edge(e[0:-1], e[1:])
 print '\n'.join(graph.get_contigs())
+
+"""
+print '\n----GRAPH----'
+print graph
+"""
