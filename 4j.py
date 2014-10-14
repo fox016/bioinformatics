@@ -4,28 +4,46 @@ import sys
 
 class Graph:
 
-	def __init__(self):
+	def __init__(self, threshold=1):
 		self.node_edge_head_map = {}
 		self.node_edge_tail_map = {}
 		self.edges = set()
 		self.edge_count_map = {}
+		self.min_count_accepted = threshold
 	
 	def add_edge(self, n1, n2):
 		edge = (n1, n2)
 		if edge in self.edges:
 			self.edge_count_map[edge] += 1
-			return
-		self.edges.add(edge)
-		self.edge_count_map[edge] = 1
-		if n1 in self.node_edge_head_map:
-			self.node_edge_head_map[n1].append(edge)
 		else:
-			self.node_edge_head_map[n1] = [edge]
-		if n2 in self.node_edge_tail_map:
-			self.node_edge_tail_map[n2].append(edge)
-		else:
-			self.node_edge_tail_map[n2] = [edge]
+			self.edges.add(edge)
+			self.edge_count_map[edge] = 1
+		if self.edge_count_map[edge] == self.min_count_accepted: 
+			if n1 in self.node_edge_head_map:
+				self.node_edge_head_map[n1].append(edge)
+			else:
+				self.node_edge_head_map[n1] = [edge]
+			if n2 in self.node_edge_tail_map:
+				self.node_edge_tail_map[n2].append(edge)
+			else:
+				self.node_edge_tail_map[n2] = [edge]
 
+	def get_contigs(self):
+		contigs = []
+		nodes = self._get_branching_head_nodes()
+		for node in nodes:
+			for edge in self.node_edge_head_map[node]:
+				next_node = edge[1]
+				contig = node
+				next_next = next_node
+				while not self._is_branching(next_next):
+					contig += next_next[-1]
+					next_next = self.node_edge_head_map[next_next][0][1]
+				contig += next_next[-1]
+				contigs.append(contig)
+		return contigs
+
+	"""
 	def get_contigs(self):
 		contigs = map(lambda node: self._get_contig_helper(node), self._get_branching_head_nodes())
 		strings = []
@@ -42,6 +60,7 @@ class Graph:
 			next_node = edge[1]
 			paths += self._get_contig_helper(next_node, path + [node])
 		return paths
+	"""
 
 	def _get_branching_head_nodes(self):
 		return filter(self._is_branching, self.node_edge_head_map.keys())
@@ -65,8 +84,9 @@ def kmer_composition(text, k):
 
 filename = sys.argv[1]
 k = int(sys.argv[2])
+threshold = int(sys.argv[3])
 reads = [line[:-1] for line in open(filename, "r")]
-graph = Graph()
+graph = Graph(threshold)
 for read in reads:
 	if read[0] == ">":
 		continue
