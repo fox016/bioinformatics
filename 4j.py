@@ -30,37 +30,16 @@ class Graph:
 
 	def get_contigs(self):
 		contigs = []
-		nodes = self._get_branching_head_nodes()
-		for node in nodes:
+		for node in self._get_branching_head_nodes():
 			for edge in self.node_edge_head_map[node]:
 				next_node = edge[1]
 				contig = node
-				next_next = next_node
-				while not self._is_branching(next_next):
-					contig += next_next[-1]
-					next_next = self.node_edge_head_map[next_next][0][1]
-				contig += next_next[-1]
+				while not self._is_branching(next_node):
+					contig += next_node[-1]
+					next_node = self.node_edge_head_map[next_node][0][1]
+				contig += next_node[-1]
 				contigs.append(contig)
 		return contigs
-
-	"""
-	def get_contigs(self):
-		contigs = map(lambda node: self._get_contig_helper(node), self._get_branching_head_nodes())
-		strings = []
-		for list_of_list_of_strs in contigs:
-			for list_of_strs in list_of_list_of_strs:
-				strings.append(list_of_strs[0] + ''.join(map(lambda x: x[-1], list_of_strs[1:])))
-		return strings
-
-	def _get_contig_helper(self, node, path=[]):
-		if self._is_branching(node) and len(path) > 0:
-			return [path + [node]]
-		paths = []
-		for edge in self.node_edge_head_map[node]:
-			next_node = edge[1]
-			paths += self._get_contig_helper(next_node, path + [node])
-		return paths
-	"""
 
 	def _get_branching_head_nodes(self):
 		return filter(self._is_branching, self.node_edge_head_map.keys())
@@ -94,8 +73,3 @@ for read in reads:
 	for index in xrange(1, len(kmers)):
 		graph.add_edge(kmers[index-1], kmers[index])
 print '\n'.join(graph.get_contigs())
-
-"""
-print '\n----GRAPH----'
-print graph
-"""
