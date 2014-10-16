@@ -37,6 +37,7 @@ def radix_sort(list_of_nums):
 		for num in solution:
 			index = num / placement
 			buckets[index % radix].append(num)
+		print "buckets", buckets
 		if index <= 0:
 			break
 		solution = reduce(lambda x,y: x+y, buckets, [])
@@ -54,6 +55,9 @@ def suffix_array(T):
 	R = map(int, [T_int[k+start:k+start+3] for k in [1,2] for start in xrange(0, n, 3)])
 	R_sorted = radix_sort(R)
 	R_prime = get_prime(R, R_sorted)
+	print "R", R
+	print "R_sorted", R_sorted
+	print "R_prime", R_prime
 
 	rank = [None for _ in xrange(len(T)+1)]
 	for index in xrange(len(C)):
@@ -61,5 +65,13 @@ def suffix_array(T):
 		rank[i] = R_prime[index]
 	rank[n+1] = 0
 	rank[n+2] = 0
+	print "Rank", rank
+
+	pairs = [int(T_int[i] + str(rank[i+1])) for i in B[0]]
+	pairs_sorted = radix_sort(pairs)
+	pairs_prime = get_prime(pairs, pairs_sorted)
+	print "Pairs", pairs
+	print "Pairs_sorted", pairs_sorted
+	print "Pairs_prime", pairs_prime
 
 suffix_array(text)
