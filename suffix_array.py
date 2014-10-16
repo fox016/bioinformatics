@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-from math import log
+# http://www.cs.helsinki.fi/u/tpkarkka/publications/jacm05-revised.pdf
+# http://en.wikipedia.org/wiki/Radix_sort#Example_in_Python
 
 text = "yabbadabbado"
 alpha = "$abdoy"
