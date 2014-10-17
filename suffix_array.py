@@ -27,15 +27,13 @@ alpha_index_map = {
 	"T": 4
 }
 
-radix = 10
-
 def radix_sort(list_of_nums):
 	solution = list(list_of_nums)
 	digit_place = 1
 	done = False
 	while not done:
 		done = True
-		buckets = [list() for _ in xrange(radix)]
+		buckets = [list() for _ in xrange(10)]
 		for num in solution:
 			index = (num / digit_place)
 			buckets[index % 10].append(num)
@@ -66,7 +64,7 @@ def compare_tuple(t1, t2):
 			return 1
 	return 0
  
-def suffix_array(T, is_string=True):
+def suffix_array(T):
 
 	print "T", T
 
@@ -76,9 +74,7 @@ def suffix_array(T, is_string=True):
 	print "B", B
 	print "C", C
 
-	if is_string:
-		T = ''.join(map(lambda char: str(alpha_index_map[char]), T))
-	T+="00"
+	T += "00"
 	R = []
 	for k in [1,2]:
 		offset = 0
@@ -92,13 +88,13 @@ def suffix_array(T, is_string=True):
 	print "R_prime", R_prime
 
 	while is_dup:
-		SA_R = suffix_array(''.join(map(str, R_prime)), False) # TODO This only works if all elements of R_prime < 10
+		SA_R = suffix_array(''.join(map(str, R_prime))) # TODO This only works if all elements of R_prime < 10
 		print "SA_R", SA_R
 		SA_R_sorted = radix_sort(SA_R)
 		print "SA_R_sorted", SA_R_sorted
 		R_prime, is_dup = get_prime(SA_R_sorted, SA_R)
 		print "R_prime", R_prime
-		R_prime = map(lambda x: x-1, R_prime[0:-1])
+		R_prime = map(lambda x: x-1, R_prime[0:-1]) # This should always cut off the trailing 0
 		print "R_prime", R_prime
 
 	rank = [None for _ in xrange(len(T)+1)]
@@ -145,4 +141,4 @@ def suffix_array(T, is_string=True):
 				return solution[0:solution_index+1] + SC[SC_index:]
 	return solution
 
-print ', '.join(map(str, suffix_array(text, True)))
+print ', '.join(map(str, suffix_array(''.join(map(lambda a: str(alpha_index_map[a]), text)))))
