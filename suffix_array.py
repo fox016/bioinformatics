@@ -3,6 +3,7 @@
 # http://www.cs.helsinki.fi/u/tpkarkka/publications/jacm05-revised.pdf
 # http://en.wikipedia.org/wiki/Radix_sort#Example_in_Python
 
+"""
 text = "yabbadabbado"
 alpha = "$abdoy"
 alpha_index_map = {
@@ -13,10 +14,10 @@ alpha_index_map = {
 	"o": 4,
 	"y": 5
 }
-
 """
+
 text = [line[:-2] for line in open("input.txt", "r")][0]
-text = "ACGT"
+text = "AACGATAGCGGTAGA"
 alpha = "$ACGT"
 alpha_index_map = {
 	"$": 0, 
@@ -25,7 +26,6 @@ alpha_index_map = {
 	"G": 3,
 	"T": 4
 }
-"""
 
 radix = 10
 
@@ -92,10 +92,12 @@ def suffix_array(T, is_string=True):
 	print "R_prime", R_prime
 
 	while is_dup:
-		SA_R = suffix_array(''.join(map(str, R_prime)), False)
+		SA_R = suffix_array(''.join(map(str, R_prime)), False) # TODO This only works if all elements of R_prime < 10
 		print "SA_R", SA_R
 		SA_R_sorted = radix_sort(SA_R)
+		print "SA_R_sorted", SA_R_sorted
 		R_prime, is_dup = get_prime(SA_R_sorted, SA_R)
+		print "R_prime", R_prime
 		R_prime = map(lambda x: x-1, R_prime[0:-1])
 		print "R_prime", R_prime
 
@@ -109,13 +111,14 @@ def suffix_array(T, is_string=True):
 	rank[n+1] = 0
 	rank[n+2] = 0
 	print "rank", rank
+	print "SC", SC
 
 	pairs = [int(T[i] + str(rank[i+1])) for i in B[0]]
-	pairs_sorted = radix_sort(pairs) # Check this
+	pairs_sorted = radix_sort(pairs)
 	print "pairs", pairs
 	print "pairs_sorted", pairs_sorted
 
-	SB = map(lambda i: B[0][i-1], get_prime(pairs_sorted, pairs)[0]) # Check this
+	SB = map(lambda i: B[0][i-1], get_prime(pairs_sorted, pairs)[0]) # Not sure get_prime will return what I need here, may have to call recursively
 	print "SB", SB
 
 	solution = [0] * (n+1)
