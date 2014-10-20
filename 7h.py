@@ -12,21 +12,12 @@ class Tree:
 	
 	def _build(self, text, SA, LCP):
 		for index in xrange(len(SA)):
-			print "\nINDEX", index
-			print "SA", SA[index], self.text[SA[index]:]
-			print "LCP", LCP[index], LCP[index+1]
-			print "CURRENT_NODE", self.current_node
 			if LCP[index+1] - LCP[index] <= 0:
 				prev_length = self._get_string_length(self.current_node)
-				print "PREV_LENGTH", prev_length
-				print "MAKE_EDGE", self.current_node, self.node_count, SA[index]+prev_length, len(text)-SA[index]-prev_length
 				self._add_edge(self.current_node, SA[index]+prev_length, len(text)-SA[index]-prev_length)
-				print "REVERSE_CURRENT_NODE", LCP[index]-LCP[index+1]
 				self._reverse_current(LCP[index]-LCP[index+1])
 			else:
-				print "MAKE_EDGE", self.current_node, self.node_count, SA[index]+LCP[index], LCP[index+1] - LCP[index]
 				self.current_node = self._add_edge(self.current_node, SA[index]+LCP[index], LCP[index+1] - LCP[index])
-				print "MAKE_EDGE", self.current_node, self.node_count, SA[index]+LCP[index+1], len(text)-SA[index]-LCP[index+1]
 				self._add_edge(self.current_node, SA[index]+LCP[index+1], len(text)-SA[index]-LCP[index+1])
 	
 	def _add_edge(self, parent, index, length):
@@ -36,7 +27,7 @@ class Tree:
 		self.node_parent_map.append(parent)
 		return child
 
-	def _split_edge(self, edge, end_length):
+	def _split_edge(self, edge, start_length):
 		str_data = self.edge_map[edge]
 		parent = edge[0]
 		child = edge[1]
@@ -44,14 +35,10 @@ class Tree:
 		length = str_data[1]
 		new_node = self.node_count
 		self.node_count+=1
-		print "MAKE_EDGE_SPLIT", parent, new_node, index, length-end_length
-		self.edge_map[(parent, new_node)] = (index, length - end_length)
-		print "MAKE_EDGE_SPLIT", new_node, child, index+length-end_length, end_length
-		self.edge_map[(new_node, child)] = (index + length - end_length, end_length)
+		self.edge_map[(parent, new_node)] = (index, start_length)
+		self.edge_map[(new_node, child)] = (index + start_length, length - start_length)
 		self.node_parent_map.append(parent)
 		self.node_parent_map[child] = new_node
-		print "NODE_PARENT_MAP", self.node_parent_map
-		print "REMOVE EDGE", edge, str_data
 		self.edge_map.pop(edge)
 		return new_node
 	
@@ -80,7 +67,6 @@ class Tree:
 		edges = []
 		for edge in self.edge_map.keys():
 			value = self.edge_map[edge]
-			print edge, value
 			edges.append(self.text[value[0]:value[0]+value[1]])
 		return '\n'.join(edges)
 
