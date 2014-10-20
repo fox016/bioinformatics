@@ -64,15 +64,7 @@ class Tree:
 				self.current_node = parent
 
 	def __str__(self):
-		edges = []
-		for edge in self.edge_map.keys():
-			value = self.edge_map[edge]
-			edges.append(self.text[value[0]:value[0]+value[1]])
-		return '\n'.join(edges)
-
-def build_tree(text, SA, LCP):
-	tree = Tree(text, SA, LCP)
-	return tree
+		return '\n'.join(self.text[value[0]:value[0]+value[1]] for value in self.edge_map.values())
 
 read = [line[:-1] for line in open("input.txt", "r")]
-print build_tree(read[0], map(int, read[1].split(", ")), map(int, read[2].split(", ")))
+print Tree(read[0], map(int, read[1].split(", ")), map(int, read[2].split(", ")))
