@@ -25,6 +25,7 @@ def max_alignment(v, w, matrix):
 			table[i][j], ops[i][j] = max_index([table[i-1][j] + INDEL_COST, \
 					table[i][j-1] + INDEL_COST, \
 					table[i-1][j-1] + match_cost(v[i-1], w[j-1], matrix)])
+	print table
 	print table[len(v)][len(w)]
 	unwind_ops(ops, v, w, len(v), len(w))
 
