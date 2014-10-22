@@ -13,8 +13,18 @@ edge_map = {}
 def linear_space_alignment(v, w, matrix, top, bottom, left, right):
         global edge_map
         if left == right:
+		while top < bottom:
+			first_node = (top, left)
+			second_node = (top+1, left)
+			edge_map[first_node] = second_node
+			top+=1
                 return
         if top == bottom:
+		while left < right:
+			first_node = (top, left)
+			second_node = (top, left+1)
+			edge_map[first_node] = second_node
+			left+=1
                 return
         mid_edge = linear_middle_edge(v[top:bottom], w[left:right], matrix)
         first_node = (top+mid_edge[0][0], left+mid_edge[0][1])
@@ -65,20 +75,20 @@ def max_index(nums):
         return best
 
 def linear_middle_edge(v, w, matrix):
-        middle = len(w) / 2
+        middle = (len(w) / 2) + 1
         source_distances, source_ops = max_alignment(v, w[0:middle], matrix)
         sink_distances, sink_ops = max_alignment(v[::-1], w[middle-1:][::-1], matrix)
-        best = (0, source_distances[0] + sink_distances[len(v)], sink_ops[len(v)])
+        best = (0, source_distances[0] + sink_distances[len(v)], source_ops[0])
         for i in xrange(1, len(v)+1):
                 length = source_distances[i] + sink_distances[len(v)+1-i]
                 if length > best[1]:
-                        best = (i, length, sink_ops[len(v)+1-i])
+                        best = (i, length, source_ops[i])
         op = best[2]
         if op == DELETE:
-                return (best[0], middle), (best[0]+1, middle)
+                return (best[0]-1, middle), (best[0], middle)
         elif op == INSERT:
-                return (best[0], middle), (best[0], middle+1)
-        return (best[0], middle), (best[0]+1, middle+1)
+                return (best[0], middle-1), (best[0], middle)
+        return (best[0]-1, middle-1), (best[0], middle)
 
 matrix = [map(int, line.split()) for line in open("blosum62.txt", "r")]
 v, w = [line[:-1] for line in open("input.txt", "r")]
