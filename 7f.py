@@ -1,15 +1,5 @@
 #!/usr/bin/python
 
-alpha = "$#ACGT"
-alpha_index_map = {
-	"$": 0, 
-	"#": 1,
-	"A": 2,
-	"C": 3,
-	"G": 4,
-	"T": 5
-}
-
 def get_prime(list_of_tuples, sorted_list):
 	list_map = {}
 	duplicates = False
@@ -101,33 +91,12 @@ def lcp_array(SA, text):
 		lcp[index] = count_same(text[SA[index-1]:], text[SA[index]:])
 	return lcp
 
-def min_index(list_of_nums):
-	best = (0, list_of_nums[0])
-	for index in xrange(len(list_of_nums)):
-		if list_of_nums[index] < best[1]:
-			best = (index, list_of_nums[index])
-	return best[0]
-
 read = [line[:-1] for line in open("input.txt", "r")]
 A = read[0]
 B = read[1]
 text = A + "#" + B
-SA = suffix_array(map(lambda a: alpha_index_map[a], text))
+SA = suffix_array(map(ord, text))
 LCP = lcp_array(SA, text)
-while True:
-	print 'SA', SA
-	print 'LCP', LCP
-	min_item_index = min_index(LCP)
-	print "min_index", min_item_index
-	if SA[min_item_index] > len(A) or SA[min_item_index-1] > len(A):
-		if SA[min_item_index] < len(A):
-			print "First", A
-			print SA[min_item_index]
-			print LCP[min_item_index]
-			print A[SA[min_item_index]:SA[min_item_index]+LCP[min_item_index]]
-			break
-		if SA[min_item_index-1] < len(A):
-			print "Second", A
-			print A[SA[min_item_index-1]:SA[min_item_index-1]+LCP[min_item_index]]
-			break
-	LCP[min_item_index] = float("inf")
+
+print SA
+print LCP
