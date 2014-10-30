@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import sys
+
 DELETE, INSERT, MATCH, FREE = range(4)
 
 MATCH_COST = 1
@@ -21,10 +23,9 @@ def max_alignment(v, w):
 					table[i-1][j-1] + match_cost(v[i-1], w[j-1]), \
 					table[0][j]])
 	max_w, max_w_index = max_index([table[len(v)][index] for index in xrange(len(w)+1)])
-	print table[len(v)][max_w_index]
-	unwind_ops(ops, v, w, len(v), max_w_index)
+	return unwind_ops(ops, v, w, len(v), max_w_index, table[len(v)][max_w_index])
 
-def unwind_ops(ops, v, w, i, j):
+def unwind_ops(ops, v, w, i, j, solution_cost):
 	new_v = []
 	new_w = []
 	while i != 0 or j != 0:
@@ -43,8 +44,7 @@ def unwind_ops(ops, v, w, i, j):
 			j-=1
 		else:
 			i = 0
-	print ''.join(new_v[::-1])
-	print ''.join(new_w[::-1])
+	return {"v": ''.join(new_v[::-1]), "w": ''.join(new_w[::-1]), "cost": solution_cost}
 
 def match_cost(p1, p2):
 	return MATCH_COST if p1 == p2 else MISMATCH_COST
@@ -56,5 +56,16 @@ def max_index(nums):
 			best = (nums[index], index)
 	return best
 
-v, w = [line[:-1] for line in open("input.txt", "r")]
-max_alignment(v, w)
+def get_input_reads(filename):
+	return [line[:-1] for line in open(filename, "r") if line[0] != ">"]
+
+def build_graph(reads):
+	matrix = [[0 for _ in xrange(len(reads))] for _ in xrange(len(reads))]
+	for i in xrange(len(reads)):
+		for j in xrange(len(reads)):
+			if i != j:
+				matrix[i][j] = max_alignment(reads[i], reads[j])
+	return matrix
+
+reads = get_input_reads(sys.argv[1])
+print build_graph(reads)
