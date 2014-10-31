@@ -4,8 +4,8 @@ import sys
 
 DELETE, INSERT, MATCH, FREE = range(4)
 
-MATCH_COST = 1
-MISMATCH_COST = -2
+MATCH_COST = 2
+MISMATCH_COST = -1
 INDEL_COST = -2
 
 def max_alignment(v, w):
@@ -26,6 +26,8 @@ def max_alignment(v, w):
 	return unwind_ops(ops, v, w, len(v), max_w_index, table[len(v)][max_w_index])
 
 def unwind_ops(ops, v, w, i, j, solution_cost):
+	if solution_cost <= 0:
+		return None
 	new_v = []
 	new_w = []
 	while i != 0 or j != 0:
@@ -60,12 +62,24 @@ def get_input_reads(filename):
 	return [line[:-1] for line in open(filename, "r") if line[0] != ">"]
 
 def build_graph(reads):
-	matrix = [[0 for _ in xrange(len(reads))] for _ in xrange(len(reads))]
+	matrix = [[None for _ in xrange(len(reads))] for _ in xrange(len(reads))]
+	cost_coordinate_map = {}
 	for i in xrange(len(reads)):
 		for j in xrange(len(reads)):
 			if i != j:
-				matrix[i][j] = max_alignment(reads[i], reads[j])
-	return matrix
+				entry = max_alignment(reads[i], reads[j])
+				matrix[i][j] = entry
+				if entry:
+					if entry['cost'] in cost_coordinate_map:
+						cost_coordinate_map[entry['cost']].append((i, j))
+					else:
+						cost_coordinate_map[entry['cost']] = [(i, j)]
+	return matrix, cost_coordinate_map
+
+def get_contigs(matrix, cost_coordinate_map):
+	pass # TODO
 
 reads = get_input_reads(sys.argv[1])
-print build_graph(reads)
+matrix, cost_coordinate_map = build_graph(reads)
+print matrix
+print cost_coordinate_map
