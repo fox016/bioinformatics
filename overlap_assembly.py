@@ -8,7 +8,7 @@ MATCH_COST = 2
 MISMATCH_COST = -1
 INDEL_COST = -2
 
-def max_alignment(v, w):
+def overlap_alignment(v, w):
 	table = [[0 for _ in w+" "] for _ in v+" "]
 	ops = [[0 for _ in w+" "] for _ in v+" "]
 	for i in xrange(len(v)+1):
@@ -72,16 +72,24 @@ def max_index(nums):
 			best = (nums[index], index)
 	return best
 
+def rigid_overlap(v, w, match_len):
+	overlap = ""
+	for index in xrange(match_len):
+		if v[len(v)-match_len+index] != w[index]:
+			return None
+		overlap += w[index]
+	return {"overlap": overlap, "v_len": len(overlap), "w_len": len(overlap), "cost": 1}
+
 def get_input_reads(filename):
 	return [line[:-1] for line in open(filename, "r") if line[0] != ">"]
 
-def build_graph(reads):
+def build_graph(reads, match_len):
 	matrix = [[None for _ in xrange(len(reads))] for _ in xrange(len(reads))]
 	cost_coordinate_map = {}
 	for i in xrange(len(reads)):
 		for j in xrange(len(reads)):
 			if i != j:
-				entry = max_alignment(reads[i], reads[j])
+				entry = rigid_overlap(reads[i], reads[j], match_len)
 				matrix[i][j] = entry
 				if entry:
 					if entry['cost'] in cost_coordinate_map:
@@ -129,7 +137,8 @@ def build_contigs(reads, row_overlap_map):
 	return contigs
 
 reads = get_input_reads(sys.argv[1])
-matrix, cost_coordinate_map = build_graph(reads)
+match_len = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+matrix, cost_coordinate_map = build_graph(reads, match_len)
 row_overlap_map = reduce_matrix(matrix, cost_coordinate_map)
 contigs = build_contigs(reads, row_overlap_map)
 print '\n'.join(contigs)
