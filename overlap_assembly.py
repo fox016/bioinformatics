@@ -8,7 +8,9 @@ MATCH_COST = 2
 MISMATCH_COST = -1
 INDEL_COST = -2
 
-def overlap_alignment(v, w):
+def overlap_alignment(v, w, match_len):
+	v = v[-1 * match_len:]
+	w = w[0:match_len]
 	table = [[0 for _ in w+" "] for _ in v+" "]
 	ops = [[0 for _ in w+" "] for _ in v+" "]
 	for i in xrange(len(v)+1):
@@ -89,7 +91,7 @@ def build_graph(reads, match_len):
 	for i in xrange(len(reads)):
 		for j in xrange(len(reads)):
 			if i != j:
-				entry = rigid_overlap(reads[i], reads[j], match_len)
+				entry = overlap_alignment(reads[i], reads[j], match_len) # TODO make this function a command line arg
 				matrix[i][j] = entry
 				if entry:
 					if entry['cost'] in cost_coordinate_map:
