@@ -85,13 +85,16 @@ def rigid_overlap(v, w, match_len):
 def get_input_reads(filename):
 	return [line[:-1] for line in open(filename, "r") if line[0] != ">"]
 
-def build_graph(reads, match_len):
+def build_graph(reads, match_len, rigid_method):
 	matrix = [[None for _ in xrange(len(reads))] for _ in xrange(len(reads))]
 	cost_coordinate_map = {}
 	for i in xrange(len(reads)):
 		for j in xrange(len(reads)):
 			if i != j:
-				entry = overlap_alignment(reads[i], reads[j], match_len) # TODO make this function a command line arg
+				if rigid_method:
+					entry = rigid_overlap(reads[i], reads[j], match_len)
+				else:
+					entry = overlap_alignment(reads[i], reads[j], match_len)
 				matrix[i][j] = entry
 				if entry:
 					if entry['cost'] in cost_coordinate_map:
@@ -140,7 +143,8 @@ def build_contigs(reads, row_overlap_map):
 
 reads = get_input_reads(sys.argv[1])
 match_len = int(sys.argv[2]) if len(sys.argv) > 2 else 10
-matrix, cost_coordinate_map = build_graph(reads, match_len)
+rigid_method = True if len(sys.argv) > 3 else False
+matrix, cost_coordinate_map = build_graph(reads, match_len, rigid_method)
 row_overlap_map = reduce_matrix(matrix, cost_coordinate_map)
 contigs = build_contigs(reads, row_overlap_map)
 print '\n'.join(contigs)
