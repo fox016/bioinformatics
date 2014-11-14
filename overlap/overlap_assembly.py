@@ -8,6 +8,53 @@ MATCH_COST = 2
 MISMATCH_COST = -1
 INDEL_COST = -2
 
+class Graph:
+
+	def __init__(self):
+		self.node_edge_head_map = {}
+		self.node_tail_count = {}
+	
+	def add_edge(self, n1, n2):
+		edge = (n1, n2)
+		if n1 in self.node_edge_head_map:
+			self.node_edge_head_map[n1].append(edge)
+		else:
+			self.node_edge_head_map[n1] = [edge]
+		if n2 in self.node_tail_count:
+			self.node_tail_count[n2] += 1
+		else:
+			self.node_tail_count[n2] = 1
+
+	def get_contigs(self):
+		contigs = []
+		for node in self._get_branching_head_nodes():
+			for edge in self.node_edge_head_map[node]:
+				next_node = edge[1]
+				contig = [node]
+				while not self._is_branching(next_node):
+					contig.append(next_node)
+					next_node = self.node_edge_head_map[next_node][0][1]
+				contig.append(next_node)
+				contigs.append(contig)
+		return contigs
+
+	def _get_branching_head_nodes(self):
+		return filter(self._is_branching, self.node_edge_head_map.keys())
+
+	def _is_branching(self, node):
+		if node not in self.node_edge_head_map or node not in self.node_tail_count:
+			return True
+		if len(self.node_edge_head_map[node]) != 1 or self.node_tail_count[node] != 1:
+			return True
+		return False
+
+	def __str__(self):
+		heads = []
+		for head in self.node_edge_head_map.keys():
+			edges = map(lambda x:x[1], self.node_edge_head_map[head])
+			heads.append(head + "->" + ','.join(edges))
+		return '\n'.join(heads)
+
 def overlap_alignment(v, w, match_len):
 	v = v[-1 * match_len:]
 	w = w[0:match_len]
@@ -75,26 +122,21 @@ def max_index(nums):
 	return best
 
 def rigid_overlap(v, w, match_len):
-	overlap = ""
 	for index in xrange(match_len):
 		if v[len(v)-match_len+index] != w[index]:
-			return None
-		overlap += w[index]
-	return {"overlap": overlap, "v_len": len(overlap), "w_len": len(overlap), "cost": 1}
+			return False
+	return True
 
 def get_input_reads(filename):
 	return [line[:-1] for line in open(filename, "r") if line[0] != ">"]
 
-def build_graph(reads, match_len, rigid_method):
+def build_graph(reads, match_len):
 	matrix = [[None for _ in xrange(len(reads))] for _ in xrange(len(reads))]
 	cost_coordinate_map = {}
 	for i in xrange(len(reads)):
 		for j in xrange(len(reads)):
 			if i != j:
-				if rigid_method:
-					entry = rigid_overlap(reads[i], reads[j], match_len)
-				else:
-					entry = overlap_alignment(reads[i], reads[j], match_len)
+				entry = overlap_alignment(reads[i], reads[j], match_len)
 				matrix[i][j] = entry
 				if entry:
 					if entry['cost'] in cost_coordinate_map:
@@ -102,6 +144,25 @@ def build_graph(reads, match_len, rigid_method):
 					else:
 						cost_coordinate_map[entry['cost']] = [(i, j)]
 	return matrix, cost_coordinate_map
+
+def get_rigid_paths(reads, match_len):
+	graph = Graph()
+	for i in xrange(len(reads)):
+		for j in xrange(len(reads)):
+			if i != j:
+				if rigid_overlap(reads[i], reads[j], match_len):
+					graph.add_edge(i, j)
+	return graph.get_contigs()
+
+def get_rigid_contigs(paths, reads, overlap_len):
+	contigs = []
+	for path in paths:
+		contig = reads[path[0]]
+		for i in xrange(1, len(path)):
+			node = path[i]
+			contig += reads[node][overlap_len:]
+		contigs.append(contig)
+	return contigs
 
 def reduce_matrix(matrix, cost_coordinate_map):
 	row_overlap_map = {}
@@ -144,7 +205,13 @@ def build_contigs(reads, row_overlap_map):
 reads = get_input_reads(sys.argv[1])
 match_len = int(sys.argv[2]) if len(sys.argv) > 2 else 10
 rigid_method = True if len(sys.argv) > 3 else False
-matrix, cost_coordinate_map = build_graph(reads, match_len, rigid_method)
-row_overlap_map = reduce_matrix(matrix, cost_coordinate_map)
-contigs = build_contigs(reads, row_overlap_map)
+
+if not rigid_method:
+	matrix, cost_coordinate_map = build_graph(reads, match_len)
+	row_overlap_map = reduce_matrix(matrix, cost_coordinate_map)
+	contigs = build_contigs(reads, row_overlap_map)
+else:
+	paths = get_rigid_paths(reads, match_len)
+	contigs = get_rigid_contigs(paths, reads, match_len)
+
 print '\n'.join(contigs)
