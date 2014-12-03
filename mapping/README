@@ -14,3 +14,11 @@ To generate a SAM file, redirect output to file:
 @param reads_fasta_file -> filename for fasta file containing reads (should contain one or more entries)
 @param kmer_size -> the genome is used to generate a hash table mapping kmers of given kmer_size to a list of indexes
 @param errors_tolerated -> the number of errors to tolerate, in range [0, 2]
+
+---------- Processing a SAM file ----------
+
+	python mapping.py example.fasta example.reads.fasta 9 0 > example.sam
+	./samtools view -bT example.fasta example.sam > example.bam
+	./samtools sort example.bam example.sorted
+	./samtools index example.sorted.bam 
+	./samtools tview example.sorted.bam example.fasta
