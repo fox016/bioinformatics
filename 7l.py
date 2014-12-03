@@ -38,7 +38,8 @@ def calc_first_occurrence(first_col):
 			first_occurrence[first_col[i][0]] = i
 	return first_occurrence
 
-read = [line[:-1] for line in open("/Users/Admin/Downloads/rosalind_7l.txt", "r")]
+#read = [line[:-1] for line in open("/Users/Admin/Downloads/rosalind_7l.txt", "r")]
+read = [line[:-1] for line in open("input.txt", "r")]
 bwt = read[0]
 patterns = read[1].split()
 
