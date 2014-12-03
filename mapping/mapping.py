@@ -21,17 +21,16 @@ def map_reads(genome, genome_name, reads, k, d):
 	kmer_index_map = hash_genome(genome, k)
 	for read_input in reads:
 		read_name, read = read_input
-		index_list = kmer_index_map[read]
-		if not index_list:
-			continue
-		write_sam_line(read_name, genome_name, index_list[0], len(read), read)
+		if read in kmer_index_map:
+			index_list = kmer_index_map[read]
+			write_sam_line(read_name, genome_name, index_list[0], len(read), read)
 
 def write_sam_line(read_name, genome_name, genome_position, matches, read):
 	line = [read_name, "0", genome_name, str(genome_position), "255", str(matches)+"M", "*", "0", "0", read, "*"]
 	print '\t'.join(line)
 
 if len(sys.argv) != 5:
-	print "Usage: python mapping.py <genome_fasta_file> <genome_reads_file> <kmer_size> <errors_tolerated>"
+	print "Usage: python mapping.py <genome_fasta_file> <reads_fasta_file> <kmer_size> <errors_tolerated>"
 	sys.exit(0)
 genome = read_fasta_file(sys.argv[1])
 reads = read_fasta_file(sys.argv[2])
