@@ -17,23 +17,33 @@ def hash_genome(genome, k):
 			kmer_index_map[kmer] = [i+1]
 	return kmer_index_map
 
-def map_reads(genome, genome_name, reads, k, d):
+def map_reads(genome, genome_name, reads, k):
 	kmer_index_map = hash_genome(genome, k)
 	for read_input in reads:
 		read_name, read = read_input
-		if read in kmer_index_map:
-			for position in kmer_index_map[read]:
-				write_sam_line(read_name, genome_name, position, len(read), read)
+		pos_freq_map = {}
+		for i in xrange(len(read) - k + 1):
+			read_kmer = read[i:i+k]
+			if read_kmer in kmer_index_map:
+				for position in kmer_index_map[read_kmer]:
+					if position-i in pos_freq_map:
+						pos_freq_map[position-i]+=1
+					else:
+						pos_freq_map[position-i]=1
+		best_pos = (-1, -1)
+		for pos in pos_freq_map:
+			if pos_freq_map[pos] > best_pos[1]:
+				best_pos = (pos, pos_freq_map[pos])
+		write_sam_line(read_name, genome_name, best_pos[0], len(read), read)
 
 def write_sam_line(read_name, genome_name, genome_position, matches, read):
 	line = [read_name, "0", genome_name, str(genome_position), "255", str(matches)+"M", "*", "0", "0", read, "*"]
 	print '\t'.join(line)
 
-if len(sys.argv) != 5:
-	print "Usage: python mapping.py <genome_fasta_file> <reads_fasta_file> <kmer_size> <errors_tolerated>"
+if len(sys.argv) != 4:
+	print "Usage: python mapping.py <genome_fasta_file> <reads_fasta_file> <kmer_size>"
 	sys.exit(0)
 genome = read_fasta_file(sys.argv[1])
 reads = read_fasta_file(sys.argv[2])
 k = int(sys.argv[3])
-d = int(sys.argv[4])
-map_reads(genome[0][1], genome[0][0], reads, k, d)
+map_reads(genome[0][1], genome[0][0], reads, k)
