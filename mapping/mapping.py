@@ -2,10 +2,21 @@ import sys
 
 def read_fasta_file(filename):
 	fasta_input = [line[:-1] for line in open(filename, 'r')]
-	reads = [] 
-	for i in xrange(1, len(fasta_input), 2):
-		reads.append((fasta_input[i-1][1:], fasta_input[i]))
-	return reads
+	ext = filename[filename.rfind('.'):]
+	if ext == ".fasta":
+		reads = []
+		for i in xrange(1, len(fasta_input), 2):
+			reads.append((fasta_input[i-1][1:], fasta_input[i]))
+		return reads
+	elif ext == ".fa":
+		read_name = fasta_input[0][1:]
+		read = ""
+		for i in xrange(1, len(fasta_input)):
+			read += fasta_input[i].upper()
+		return [(read_name, read)]
+	else:
+		print "File type " + ext + " not supported"
+		sys.exit(0)
 
 def hash_genome(genome, k):
 	kmer_index_map = {}
