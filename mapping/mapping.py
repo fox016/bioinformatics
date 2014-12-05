@@ -22,8 +22,8 @@ def map_reads(genome, genome_name, reads, k, d):
 	for read_input in reads:
 		read_name, read = read_input
 		if read in kmer_index_map:
-			index_list = kmer_index_map[read]
-			write_sam_line(read_name, genome_name, index_list[0], len(read), read)
+			for position in kmer_index_map[read]:
+				write_sam_line(read_name, genome_name, position, len(read), read)
 
 def write_sam_line(read_name, genome_name, genome_position, matches, read):
 	line = [read_name, "0", genome_name, str(genome_position), "255", str(matches)+"M", "*", "0", "0", read, "*"]
