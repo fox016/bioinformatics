@@ -1,5 +1,3 @@
-import sys
-
 mass_table = {
 	"G": 57,
 	"A": 71,
@@ -41,7 +39,6 @@ def get_subpeptides(peptide):
 def get_mass(subpeptide):
 	return reduce(lambda x,y: x+y, map(lambda n: mass_table[n], list(subpeptide)), 0)
 
-filename = sys.argv[1]
-input = [line.split() for line in open(filename, "r")]
+input = [line.split() for line in open("input.txt", "r")]
 peptide = input[0][0]
 print ' '.join(map(str, get_spectrum(peptide)))

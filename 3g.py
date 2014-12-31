@@ -14,7 +14,6 @@ def gibbs_sampler(k, t, n, dna_list):
 		current_score = score(motifs)
 		if current_score < best['score']:
 			best = {'score': current_score, 'motifs': motifs}
-			print best
 	return best['motifs']
 
 def get_random_motifs(dna_list, k):

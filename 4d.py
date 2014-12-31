@@ -2,17 +2,11 @@
 
 def get_graph(kmers):
 	graph = {}
-	for i in xrange(len(kmers)):
-		for j in xrange(len(kmers)):
-			if kmers[i][1:] == kmers[j][:-1]:
-				if kmers[i][:-1] not in graph:
-					graph[kmers[i][:-1]] = set([kmers[j][:-1]])
-				else:
-					graph[kmers[i][:-1]].add(kmers[j][:-1])
-				if kmers[i][1:] not in graph:
-					graph[kmers[i][1:]] = set([kmers[j][1:]])
-				else:
-					graph[kmers[i][1:]].add(kmers[j][1:])
+	for kmer in kmers:
+		if kmer[:-1] not in graph:
+			graph[kmer[:-1]] = [kmer[1:]]
+		else:
+			graph[kmer[:-1]].append(kmer[1:])
 	return graph
 
 def print_graph(graph):

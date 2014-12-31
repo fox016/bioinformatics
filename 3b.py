@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import sys
 
 def median_string(dna_list, k):
 	best = {"pattern": "", "distance": float("inf")}
@@ -8,7 +7,6 @@ def median_string(dna_list, k):
 		if current_distance < best['distance']:
 			best['pattern'] = pattern
 			best['distance'] = current_distance
-			print best
 	return best['pattern']
 
 def sum_distance(pattern, dna_list):

@@ -1,5 +1,3 @@
-import sys
-
 values = [57, 71, 87, 97, 99, 101, 103, 113, 114, 115, 128, 129, 131, 137, 147, 156, 163, 186]
 
 def sequence_cyclopeptide(spectrum):
@@ -53,6 +51,5 @@ def get_subpeptides(peptide, isCircular):
 	subs.append(peptide)
 	return subs
 
-#spectrum = map(int, "0 97 97 99 101 103 196 198 198 200 202 295 297 299 299 301 394 396 398 400 400 497".split())
 spectrum = [map(int, line.split()) for line in open("input.txt", "r")][0]
 print ' '.join(map(lambda peptide: '-'.join(map(str, peptide[1:])), sequence_cyclopeptide(spectrum)))

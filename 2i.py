@@ -64,6 +64,6 @@ def get_delta(a):
 	a_inv = map(lambda x: x * -1, a)
 	return sorted([a1 + a2 for a1 in a for a2 in a_inv])
 
-d = [map(int, line.split()) for line in open("rosalind_2i (1).txt", "r")][0]
+d = [map(int, line.split()) for line in open("input1.txt", "r")][0]
 a = turnpike(d)
 print ' '.join(map(str, a))

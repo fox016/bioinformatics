@@ -73,7 +73,7 @@ class Graph:
 					self.cycle = list(current_cycle)
 				return
 
-edge_input = [line[:-1] for line in open("input.txt", "r")]
+edge_input = [line[:-1] for line in open("input.txt", "r")][1:]
 graph = Graph()
 for e in edge_input:
 	graph.add_edge(e[0:-1], e[1:])

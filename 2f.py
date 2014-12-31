@@ -1,5 +1,3 @@
-import sys
-
 values = [57, 71, 87, 97, 99, 101, 103, 113, 114, 115, 128, 129, 131, 137, 147, 156, 163, 186]
 
 def leaderboard_sequence_cyclopeptide(spectrum, n):

@@ -123,8 +123,7 @@ def translate_codon(codon):
 				return "F"
 	return "ERR"
 
-filename = sys.argv[1]
-input = [line.split() for line in open(filename, "r")]
+input = [line.split() for line in open("input.txt", "r")]
 genome = input[0][0]
 peptide = input[1][0]
-print find_peptide_encoding(genome, peptide)
+print '\n'.join(find_peptide_encoding(genome, peptide))

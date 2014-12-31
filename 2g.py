@@ -24,7 +24,4 @@ def spectral_convolution(spectrum):
 	return convolution
 
 spectrum = [map(int, line.split()) for line in open("input.txt", "r")][0]
-output = open("output.txt", "w+")
-solution = ' '.join(map(str, spectral_convolution(spectrum)))
-output.write(solution)
-output.close()
+print ' '.join(map(str, spectral_convolution(spectrum)))

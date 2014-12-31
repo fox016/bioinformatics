@@ -57,8 +57,7 @@ def get_combinations(nums, length):
 		result = [x+[y] for x in result for y in pool]
 	return result
 
-filename = sys.argv[1]
-input = [line.split() for line in open(filename, "r")]
-genome = input[0][0]
-k, d = map(int, input[1])
+lines = [line.split() for line in open("input.txt", "r")]
+genome = lines[0][0]
+k, d = map(int, lines[1])
 print ' '.join(find_approx_frequent_words(genome, k, d)['values'])

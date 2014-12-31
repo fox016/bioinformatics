@@ -73,8 +73,7 @@ def get_complement(pattern):
 
 	return ''.join(map(lambda x: nucleotide_pair_map[x], pattern)[::-1])
 
-filename = sys.argv[1]
-input = [line.split() for line in open(filename, "r")]
+input = [line.split() for line in open("input.txt", "r")]
 genome = input[0][0]
 k, d = map(int, input[1])
 print ' '.join(find_approx_complement_frequent_words(genome, k, d))

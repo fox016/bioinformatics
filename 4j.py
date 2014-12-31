@@ -72,4 +72,4 @@ for read in reads:
 	kmers = kmer_composition(read, k)
 	for index in xrange(1, len(kmers)):
 		graph.add_edge(kmers[index-1], kmers[index])
-print '\n'.join(graph.get_contigs())
+print ' '.join(graph.get_contigs())

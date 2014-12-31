@@ -1,5 +1,3 @@
-import sys
-
 def convolution_sequence_cyclopeptide(m, n, spectrum):
 	spectrum_mass = spectrum[-1]
 	leaderboard = set([tuple([0])])

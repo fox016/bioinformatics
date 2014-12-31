@@ -81,7 +81,7 @@ def get_combinations(alphabet, length):
 	for pool in pools:
 		result = [x+y for x in result for y in pool]
 	return result
-k = 16
+k = 9
 edge_input = get_combinations("01", k)
 graph = Graph()
 for e in edge_input:

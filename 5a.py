@@ -5,7 +5,6 @@ def change_problem(amount, values):
 	for value in values:
 		for index in xrange(value, len(table)):
 				table[index] = min(table[index], table[index-value]+1)
-	print table
 	return table[amount]
 
 read = [line[:-1] for line in open("input.txt", "r")]

@@ -106,5 +106,5 @@ print reconstruct(d, reads)
 """
 
 read = [line[:-1] for line in open("input.txt", "r")]
-d = int(read[0])
+k, d = map(int, read[0].split())
 print reconstruct(d, read[1:])

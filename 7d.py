@@ -66,6 +66,5 @@ class Tree:
 		return '\n'.join(rows)
 
 text = [line[:-1] for line in open("input.txt", "r")][0]
-text = "AAA$"
 tree = Tree(text)
 print tree

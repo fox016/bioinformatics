@@ -56,7 +56,7 @@ def unwind_ops(ops_list, v, w, i, j):
 	new_w = []
 	layer = MIDDLE
 	while i != 0 or j != 0:
-		print i, j
+		#print i, j
 		if ops_list[layer][i][j] == CONTINUE:
 			if layer == LOWER:
 				new_v.append(v[i-1])
